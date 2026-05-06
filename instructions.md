@@ -11,6 +11,16 @@
 - `today`: YYYY-MM-DD (KST)
 - `now_kst`: HH:MM (KST)
 
+## 0.5. Git 동기화 (먼저)
+
+클라우드 에이전트는 격리된 워킹디렉토리에서 시작한다. 매 실행은 git에서 시작하고 git으로 끝나야 한다.
+
+```
+git pull --rebase origin main   # 다른 차수의 최신 변경분 흡수
+```
+
+pull 실패 시: 즉시 중단하고 사용자에게 상황 보고 (충돌은 자동 해결하지 말 것).
+
 ## 1. 휴장일 / 주말 체크
 
 ```
@@ -231,6 +241,7 @@ decisions.md 끝에 추가 블록:
 ## 10. 실행 순서 요약
 
 ```
+0. git pull --rebase origin main
 1. 휴장/주말 체크
 2. portfolio.json + watchlist.json + decisions.md(마지막 5) + analysis.md + trade_log.md(마지막 3) 로드
 3. 14개 종목 시세 병렬 WebFetch (폴백 체인)
@@ -238,8 +249,17 @@ decisions.md 끝에 추가 블록:
 5. 의사결정 룰 우선순위로 순회 (차수당 최대 2건 거래)
 6. 체결 시뮬레이션 (수수료 차감)
 7. portfolio.json + trade_log.md + decisions.md + latest_snapshot.json 갱신
-8. cycle == 3이면 일일 요약 추가 + 사용자 알림
+8. cycle == 3이면 일일 요약 추가
+9. git add -A && git commit -m "cycle N — YYYY-MM-DD HH:MM KST" && git push origin main
+10. cycle == 3이면 일일 요약 블록을 최종 응답으로 출력 (라우틴 실행 기록에 표시됨)
 ```
+
+## 11. Git 커밋 규칙
+
+- 메시지: `"cycle {1|2|3} — {YYYY-MM-DD HH:MM} KST"` (예: `"cycle 1 — 2026-05-06 09:37 KST"`)
+- 휴장일 스킵 시: `"skip holiday — YYYY-MM-DD"`
+- 데이터 결측 시: `"cycle {N} partial — {YYYY-MM-DD HH:MM} KST (data missing)"`
+- push 실패 시: 1회 재시도, 그래도 실패하면 routine 응답에 ERROR로 명시
 
 ---
 
