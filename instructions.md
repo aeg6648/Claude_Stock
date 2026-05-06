@@ -45,7 +45,8 @@ watchlist.tickers 전 종목 + benchmarks의 코오롱티슈진(950160) + KODEX 
 1. `google_url`로 WebFetch — 가장 신뢰
 2. 실패 시 `hankyung_url`로 WebFetch
 3. 실패 시 `investing_url` (있는 경우)
-4. 모두 실패 → 해당 종목 결측 처리, decisions.md에 기록, 그 차수 매매 결정 스킵
+4. 실패 시 **WebSearch 폴백** (아래 §3.5)
+5. 모두 실패 → 해당 종목 결측 처리, decisions.md에 기록, 그 차수 매매 결정 스킵
 
 **병렬 호출 권장**: 12종목+벤치마크 2개 = 14개 WebFetch를 한 메시지에 병렬로 보낸다.
 
@@ -55,6 +56,62 @@ Extract: current price (KRW integer), change (KRW), change_pct (number), day_hig
 ```
 
 **레버리지 ETF 추가 검증**: 122630 (KODEX 레버리지) / 233740 (KODEX 코스닥150 레버리지)는 codes 변경 가능성 낮으나, 첫 fetch에서 prev_close 대비 일중 변동이 KOSPI 200 / KOSDAQ 150 변동의 약 2배인지 확인 (sanity check). 어긋나면 결측 처리.
+
+## 3.5. WebSearch 폴백 요령
+
+WebFetch 3개 모두 실패한 종목에 한해 WebSearch로 마지막 시도. **클라우드 환경 WebFetch가 종종 차단됨 (특히 finance.yahoo.com, finance.naver.com)이라 이 폴백이 자주 활성화될 가능성 높다.**
+
+### 쿼리 템플릿 (효과 검증된 패턴, 우선순위 순)
+
+1. **한글 풀쿼리**: `"{종목명} {코드} 현재가 2026년 {M}월 {D}일"`
+   - 예: `삼성전자 005930 현재가 2026년 5월 6일` → MSN/Investing/Daum/Hankyung 결과 다수
+2. **영문 백업**: `"{영문 종목명} {코드}.KS stock price today"`
+   - 예: `Samsung Electronics 005930.KS stock price today` (KOSPI는 .KS, KOSDAQ는 .KQ)
+3. **단순 패턴**: `"{코드} 주가"` — 빠른 조회용 fallback
+
+### 결과 파싱 요령
+
+WebSearch 결과는 자연어 답변 + 링크 리스트 형태. 다음 순서로 가격 추출:
+
+1. **답변 텍스트에서 정규식 매칭** (최우선):
+   - 패턴: `₩[\d,]+` 또는 `[\d,]+원` 또는 `KRW [\d,.]+`
+   - 예: "현재가는 220,500원이며" → 220500
+2. **여러 소스 교차검증**:
+   - 답변에 2개 이상 가격이 언급되면 (예: "MSN 220,500원, 한경 225,500원") → 평균 또는 더 최신 timestamp 가격 채택
+   - 차이가 ±5% 이상이면 → 의심, 결측 처리
+3. **링크 텍스트 활용**:
+   - 검색 결과 link title에 가격 포함되는 경우도 흔함
+   - 예: "005930 220,500.00 -5,500.00 -2.43% : 삼성전자" → price=220500, change=-5500, change_pct=-2.43
+
+### 안전장치 (sanity check)
+
+WebSearch로 얻은 가격은 다음 중 **하나라도 위반하면 결측 처리**:
+- `latest_snapshot.json`에 직전 가격이 있는 경우, 그 가격 대비 ±20% 초과 (한국 시장 일중 상한가/하한가는 ±30%이지만 보수적으로 ±20%로 설정)
+- 가격이 음수, 0, 1억 초과
+- 텍스트에서 추출한 숫자가 단위(원/만원/억원) 모호 → "원" 단위가 명시된 경우만 채택
+
+### 메타데이터 기록
+
+WebSearch로 채운 가격은 `latest_snapshot.json`의 `prices.{code}` 항목에:
+```json
+{"price": 220500, "change_pct": -2.43, "fetched_at": "...", "source": "websearch", "confidence": "low"}
+```
+
+`source: "websearch"` 종목은 의사결정 시 **보수적 처리**:
+- 신규 매수 1단위만 허용 (분할 강도 절반)
+- 손절/익절은 정상 트리거 (가격이 실제 다를 수 있어도 안전 방향)
+
+### 예시 (cycle 2가 005930 시세 폴백 시)
+
+```
+1. WebFetch google.com/finance/quote/005930:KRX → fail (cloud blocked)
+2. WebFetch markets.hankyung.com/stock/005930 → fail
+3. (no investing_url for some) → skip
+4. WebSearch "삼성전자 005930 현재가 2026년 5월 6일"
+   → 결과 텍스트에서 "260,500원" 추출
+   → 직전 snapshot 260,500과 일치 → confidence high → 채택
+5. record source="websearch", proceed with decision
+```
 
 수집 결과를 다음 구조로 메모리 정리:
 ```json
@@ -246,10 +303,11 @@ decisions.md 끝에 추가 블록:
 
 ## 9. 오류 처리 원칙
 
-- WebFetch 일부 실패: 결측 종목만 스킵하고 나머지는 정상 진행
-- WebFetch 전부 실패: portfolio.json 변경하지 말 것, decisions.md에 "데이터 수집 실패" 한 줄만 기록
+- WebFetch 일부 실패 → 폴백 체인 다음 단계 (1→2→3→**WebSearch 4**) 시도. 4단계까지 실패한 종목만 결측 처리.
+- 모든 종목 데이터 수집 실패 → portfolio.json 변경 금지, decisions.md에 "데이터 수집 전체 실패" 기록 후 종료
 - Write 실패: 같은 파일 한 번 더 시도, 또 실패하면 사용자에게 알림 (cycle 무관)
 - 절대 추측해서 거래하지 말 것 — 데이터 없으면 보유
+- WebSearch로 채운 가격(`source: "websearch"`)은 §3.5에 따라 보수적 처리
 
 ## 10. 실행 순서 요약
 
@@ -257,11 +315,12 @@ decisions.md 끝에 추가 블록:
 0. git pull --rebase origin main
 1. 휴장/주말 체크
 2. portfolio.json + watchlist.json + decisions.md(마지막 5) + analysis.md + trade_log.md(마지막 3) 로드
-3. 14개 종목 시세 병렬 WebFetch (폴백 체인)
+3. 14개 종목 시세 병렬 WebFetch (폴백 체인 1→2→3)
+3.5 실패한 종목에 한해 WebSearch 폴백 (§3.5 쿼리 템플릿 + 파싱 + sanity check)
 4. 마크투마켓 + 종목별 PnL 계산
-5. 의사결정 룰 우선순위로 순회 (차수당 최대 2건 거래)
+5. 의사결정 룰 우선순위로 순회 (차수당 최대 4건 거래, websearch source는 보수적)
 6. 체결 시뮬레이션 (수수료 차감)
-7. portfolio.json + trade_log.md + decisions.md + latest_snapshot.json 갱신
+7. portfolio.json + trade_log.md + decisions.md + history.jsonl(append) + latest_snapshot.json 갱신
 8. cycle == 3이면 일일 요약 추가
 9. git add -A && git commit -m "cycle N — YYYY-MM-DD HH:MM KST" && git push origin main
 10. cycle == 3이면 일일 요약 블록을 최종 응답으로 출력 (라우틴 실행 기록에 표시됨)
