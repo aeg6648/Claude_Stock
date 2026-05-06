@@ -1,7 +1,7 @@
 {
-  "as_of": "2026-05-06T14:30:00+09:00",
+  "as_of": "2026-05-06T15:13:00+09:00",
   "starting_capital_krw": 100000000,
-  "cash_krw": 66729259,
+  "cash_krw": 50761365,
   "positions": {
     "196170": {
       "code": "196170",
@@ -17,7 +17,7 @@
       "code": "042700",
       "name": "한미반도체",
       "exchange": "KRX",
-      "shares": 15,
+      "shares": 30,
       "avg_cost_krw": 385000,
       "first_buy_date": "2026-05-06",
       "target_weight_pct": 12,
@@ -37,7 +37,7 @@
       "code": "247540",
       "name": "에코프로비엠",
       "exchange": "KOSDAQ",
-      "shares": 17,
+      "shares": 34,
       "avg_cost_krw": 222500,
       "first_buy_date": "2026-05-06",
       "target_weight_pct": 8,
@@ -47,7 +47,7 @@
       "code": "028300",
       "name": "HLB",
       "exchange": "KOSDAQ",
-      "shares": 64,
+      "shares": 128,
       "avg_cost_krw": 61700,
       "first_buy_date": "2026-05-06",
       "target_weight_pct": 8,
@@ -57,7 +57,7 @@
       "code": "035720",
       "name": "카카오",
       "exchange": "KRX",
-      "shares": 53,
+      "shares": 106,
       "avg_cost_krw": 46400,
       "first_buy_date": "2026-05-06",
       "target_weight_pct": 5,
@@ -74,7 +74,7 @@
       "bucket": "tech_growth"
     }
   },
-  "fees_paid_total_krw": 10231,
+  "fees_paid_total_krw": 12625,
   "realized_pnl_krw": -4869,
   "fee_model": {
     "buy_commission_pct": 0.015,
