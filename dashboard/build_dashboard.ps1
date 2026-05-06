@@ -269,7 +269,9 @@ if ($historyEntries.Count -ge 2) {
     $plotW = $w - $padL - $padR
     $plotH = $h - $padT - $padB
 
-    $base_my = [double]$historyEntries[0].my_value_krw
+    # 내 포트는 시작자본(₩100M)을 base로 — cycle 1도 수수료 차감으로 100보다 약간 아래
+    $base_my = $startingCapital
+    # 외부 벤치마크는 첫 관측가를 base로 (운영 시작 시점 기준)
     $base_kospi = [double]$historyEntries[0].kospi200_price
     $base_kolon = [double]$historyEntries[0].kolon_price
 
