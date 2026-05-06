@@ -1,44 +1,52 @@
 {
-  "as_of": "2026-05-06T10:30:00+09:00",
-  "cycle": 1,
+  "as_of": "2026-05-06T12:43:00+09:00",
+  "cycle": 2,
   "portfolio": {
-    "cash_krw": 96406221,
-    "positions_value_krw": 3593240,
-    "total_equity_krw": 99999461,
-    "total_pnl_krw": -539,
-    "total_pnl_pct": -0.000539,
-    "fees_paid_total_krw": 539,
-    "realized_pnl_krw": 0
+    "cash_krw": 96009659,
+    "positions_value_krw": 3971000,
+    "total_equity_krw": 99980659,
+    "total_pnl_krw": -19341,
+    "total_pnl_pct": -0.01934,
+    "fees_paid_total_krw": 5841,
+    "realized_pnl_krw": -4869
   },
   "positions": [
-    {"code": "229200", "name": "KODEX 코스닥150", "shares": 124, "avg_cost": 20135, "last_price": 20135, "unrealized_pnl_krw": 0, "unrealized_pnl_pct": 0, "weight_pct": 2.50},
-    {"code": "196170", "name": "알테오젠", "shares": 3, "avg_cost": 365500, "last_price": 365500, "unrealized_pnl_krw": 0, "unrealized_pnl_pct": 0, "weight_pct": 1.10}
+    {
+      "code": "196170",
+      "name": "알테오젠",
+      "shares": 11,
+      "avg_cost": 362227,
+      "last_price": 361000,
+      "unrealized_pnl_krw": -13497,
+      "unrealized_pnl_pct": -0.34,
+      "weight_pct": 3.97
+    }
   ],
   "prices": {
-    "069500": {"price": 111915, "change_pct": 6.28, "fetched_at": "2026-05-06T10:22:28+09:00", "source": "google"},
-    "229200": {"price": 20135, "change_pct": -0.20, "fetched_at": "2026-05-06T10:22:32+09:00", "source": "google"},
-    "005930": {"price": 260500, "change_pct": 12.04, "fetched_at": "2026-05-06T10:22:00+09:00", "source": "investing"},
-    "000660": {"price": 1585500, "change_pct": 9.57, "fetched_at": "2026-05-06T10:22:31+09:00", "source": "google"},
-    "091160": {"price": 137550, "change_pct": 5.44, "fetched_at": "2026-05-06T10:22:36+09:00", "source": "google"},
-    "373220": {"price": 472000, "change_pct": 0.00, "fetched_at": "2026-05-06T10:22:39+09:00", "source": "google"},
-    "005380": {"price": 552000, "change_pct": 2.41, "fetched_at": "2026-05-06T10:22:36+09:00", "source": "google"},
-    "305720": {"price": 22315, "change_pct": 0.25, "fetched_at": "2026-05-06T10:22:40+09:00", "source": "google"},
-    "105560": {"price": 161000, "change_pct": 2.03, "fetched_at": "2026-05-06T10:22:30+09:00", "source": "google"},
-    "161510": {"price": 27700, "change_pct": 0.22, "fetched_at": "2026-05-06T10:22:42+09:00", "source": "google"},
-    "207940": {"price": 1477000, "change_pct": -0.54, "fetched_at": "2026-05-06T10:22:37+09:00", "source": "google"},
-    "196170": {"price": 365500, "change_pct": -2.01, "fetched_at": "2026-05-06T10:22:44+09:00", "source": "google"},
-    "950160": {"price": 104900, "change_pct": 0.10, "fetched_at": "2026-05-06T10:14:29+09:00", "source": "google"}
+    "005930": {"price": 259500, "change_pct": 11.61, "fetched_at": "2026-05-06T12:43:00+09:00", "source": "websearch", "confidence": "medium"},
+    "000660": {"price": 1595000, "change_pct": 10.23, "fetched_at": "2026-05-06T12:43:00+09:00", "source": "websearch", "confidence": "high"},
+    "196170": {"price": 361000, "change_pct": -4.12, "fetched_at": "2026-05-06T12:43:00+09:00", "source": "websearch", "confidence": "medium"},
+    "229200": null,
+    "042700": null,
+    "122630": null,
+    "233740": null,
+    "247540": null,
+    "028300": null,
+    "035720": null,
+    "035420": null,
+    "069500": null,
+    "950160": null
   },
   "benchmarks": {
     "kospi200_start_price": 111915,
-    "kospi200_current_price": 111915,
-    "kospi200_return_pct": 0,
+    "kospi200_current_price": null,
+    "kospi200_return_pct": null,
     "kolon_tissuegene_start_price": 104900,
-    "kolon_tissuegene_current_price": 104900,
-    "kolon_tissuegene_return_pct": 0,
-    "user_kolon_position_value_krw": 554921000,
+    "kolon_tissuegene_current_price": null,
+    "kolon_tissuegene_return_pct": null,
+    "user_kolon_position_value_krw": null,
     "user_kolon_shares": 5290,
     "user_kolon_avg_cost_krw": 47660,
-    "my_portfolio_return_pct": -0.000539
+    "my_portfolio_return_pct": -0.01934
   }
 }
