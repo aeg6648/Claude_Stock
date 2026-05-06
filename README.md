@@ -10,16 +10,29 @@
 
 모든 의사결정은 모델 능력 평가 목적의 시뮬레이션이며, 실제 매매에 활용해서는 안 됩니다.
 
-## 사용법 (수동 모드)
+## 사용법
 
-1. 시각화 확인: `dashboard\view.bat` 더블클릭 → git pull + dashboard.html 자동 빌드 + 브라우저 오픈
-2. 사이클 실행: 채팅창에 Claude에게 "사이클 돌려줘" 또는 "오늘 마감 정리" 등 요청
-   → 그 시점에 Claude가:
-   - Bash+curl로 한경 13종목 시세 수집 (실제 가격)
-   - AGGRESSIVE 룰 적용 + 결정
-   - portfolio.json / trade_log.md / decisions.md / latest_snapshot.json / history.jsonl 갱신
-   - git commit + push
-3. 거래 기록: dashboard.html → "📋 전체 거래 기록 보기" 클릭 → trades.html (필터/정렬 가능)
+### 🔁 한 번 클릭으로 자동 처리 (권장)
+**`dashboard\rebalance.bat`** 더블클릭 → 모든 작업 자동:
+1. git pull (최신 상태 동기화)
+2. 한경 13종목 fresh 시세 수집 (curl + Mozilla UA)
+3. AGGRESSIVE 룰 적용 + 의사결정 (최대 4건 거래)
+4. 모의 체결 (수수료/세금 정확 차감)
+5. portfolio.json / trade_log.md / decisions.md / latest_snapshot.json / history.jsonl 갱신
+6. dashboard.html + trades.html 재빌드
+7. git commit + push (커밋 메시지: `rebalance_local — YYYY-MM-DD HH:MM KST (N trades)`)
+8. 브라우저에서 dashboard.html 자동 오픈
+
+매 클릭이 1 cycle. 시장 시간 중에 누르면 그 시점 가격으로, 마감 후 누르면 종가로 작업.
+
+### 👁️ 보기만 (매매 없이 시각화만)
+**`dashboard\view.bat`** 더블클릭 → git pull + dashboard.html 빌드 + 오픈. 룰 적용/거래 없음.
+
+### 📋 거래 기록 페이지
+dashboard.html → **"📋 전체 거래 기록 보기"** 버튼 클릭 → trades.html (필터/정렬)
+
+### 💬 Claude에게 직접 요청 (개별 판단 필요 시)
+복잡한 결정 (예: 전략 변경, 코오롱티슈진 분석, 룰 외 강제 매매)은 채팅에서 직접 요청.
 
 ## 파일 역할
 
