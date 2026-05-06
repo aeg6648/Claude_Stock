@@ -53,6 +53,41 @@ $snapshot  = Read-JsonFile (Join-Path $PortfolioRoot 'latest_snapshot.json')
 $tradeLog  = Read-TextFile (Join-Path $PortfolioRoot 'trade_log.md')
 $decisions = Read-TextFile (Join-Path $PortfolioRoot 'decisions.md')
 
+# === 거래 기록 파싱 (대시보드/trades.html 공용) ===
+function Parse-Trades {
+    param([string]$Markdown)
+    $trades = @()
+    if ([string]::IsNullOrWhiteSpace($Markdown)) { return $trades }
+    $parts = [regex]::Split($Markdown, '(?m)^## ')
+    if ($parts.Count -le 1) { return $trades }
+    foreach ($block in $parts[1..($parts.Count - 1)]) {
+        $block = $block.Trim()
+        if ($block -notmatch '^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s+KST\s*\|\s*(BUY|SELL)\s*\|\s*(\d{6})\s+([^\r\n\(]+)') { continue }
+        $date = $matches[1]; $time = $matches[2]; $type = $matches[3]; $code = $matches[4]; $name = $matches[5].Trim()
+        $shares = 0; $price = 0; $amount = 0; $fee = 0; $reason = ''
+        if ($block -match '수량:\s*([0-9,]+)주\s*@\s*₩([0-9,]+)') {
+            $shares = [int]([string]$matches[1] -replace ',', '')
+            $price = [int]([string]$matches[2] -replace ',', '')
+        }
+        if ($block -match '체결금액:\s*₩([0-9,]+)') { $amount = [int]([string]$matches[1] -replace ',', '') }
+        if ($block -match '수수료:\s*₩([0-9,]+)') { $fee = [int]([string]$matches[1] -replace ',', '') }
+        if ($block -match '(?m)^- 사유:\s*(.+?)\s*$') { $reason = $matches[1].Trim() }
+        $trades += [PSCustomObject]@{
+            Date = $date; Time = $time; Type = $type; Code = $code; Name = $name
+            Shares = $shares; Price = $price; Amount = $amount; Fee = $fee; Reason = $reason
+        }
+    }
+    return $trades
+}
+$tradesArr = @(Parse-Trades -Markdown $tradeLog)
+$totalTrades = $tradesArr.Count
+$totalBuy = @($tradesArr | Where-Object { $_.Type -eq 'BUY' }).Count
+$totalSell = @($tradesArr | Where-Object { $_.Type -eq 'SELL' }).Count
+$totalAmount = ($tradesArr | Measure-Object -Sum Amount).Sum
+$totalFee = ($tradesArr | Measure-Object -Sum Fee).Sum
+if ($null -eq $totalAmount) { $totalAmount = 0 }
+if ($null -eq $totalFee) { $totalFee = 0 }
+
 # history.jsonl 로드 (한 줄 = 한 cycle 스냅샷)
 $historyPath = Join-Path $PortfolioRoot 'history.jsonl'
 $historyEntries = @()
@@ -422,43 +457,7 @@ $decHtml = if ($decBlocks.Count -gt 0) {
     '<p class="empty">아직 점검 기록이 없습니다.</p>'
 }
 
-# === 거래 기록 파싱 (trades.html용) ===
-function Parse-Trades {
-    param([string]$Markdown)
-    $trades = @()
-    if ([string]::IsNullOrWhiteSpace($Markdown)) { return $trades }
-    $parts = [regex]::Split($Markdown, '(?m)^## ')
-    if ($parts.Count -le 1) { return $trades }
-    foreach ($block in $parts[1..($parts.Count - 1)]) {
-        $block = $block.Trim()
-        if ($block -notmatch '^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s+KST\s*\|\s*(BUY|SELL)\s*\|\s*(\d{6})\s+([^\r\n\(]+)') { continue }
-        $date = $matches[1]; $time = $matches[2]; $type = $matches[3]; $code = $matches[4]; $name = $matches[5].Trim()
-        $shares = 0; $price = 0; $amount = 0; $fee = 0; $reason = ''
-        if ($block -match '수량:\s*([0-9,]+)주\s*@\s*₩([0-9,]+)') {
-            $shares = [int]([string]$matches[1] -replace ',', '')
-            $price = [int]([string]$matches[2] -replace ',', '')
-        }
-        if ($block -match '체결금액:\s*₩([0-9,]+)') { $amount = [int]([string]$matches[1] -replace ',', '') }
-        if ($block -match '수수료:\s*₩([0-9,]+)') { $fee = [int]([string]$matches[1] -replace ',', '') }
-        if ($block -match '(?m)^- 사유:\s*(.+?)\s*$') { $reason = $matches[1].Trim() }
-        $trades += [PSCustomObject]@{
-            Date = $date; Time = $time; Type = $type; Code = $code; Name = $name
-            Shares = $shares; Price = $price; Amount = $amount; Fee = $fee; Reason = $reason
-        }
-    }
-    return $trades
-}
-
-$tradesArr = @(Parse-Trades -Markdown $tradeLog)
-$totalTrades = $tradesArr.Count
-$totalBuy = @($tradesArr | Where-Object { $_.Type -eq 'BUY' }).Count
-$totalSell = @($tradesArr | Where-Object { $_.Type -eq 'SELL' }).Count
-$totalAmount = ($tradesArr | Measure-Object -Sum Amount).Sum
-$totalFee = ($tradesArr | Measure-Object -Sum Fee).Sum
-if ($null -eq $totalAmount) { $totalAmount = 0 }
-if ($null -eq $totalFee) { $totalFee = 0 }
-
-# Build trades.html (separate page)
+# === trades.html 빌드 (Parse-Trades는 위에서 미리 호출됨) ===
 $tradeRows = ''
 foreach ($t in ($tradesArr | Sort-Object @{e={$_.Date};desc=$true}, @{e={$_.Time};desc=$true})) {
     $typeClass = if ($t.Type -eq 'BUY') { 'buy' } else { 'sell' }
