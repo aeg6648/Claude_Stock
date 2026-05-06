@@ -178,7 +178,14 @@ position[code].shares -= shares_to_sell
    (1-3 문장으로 이번 차수 핵심 판단)
    ```
 
-4. `latest_snapshot.json` 덮어쓰기 — 대시보드용:
+4-pre. `history.jsonl` 한 줄 append (시계열 차트용):
+   ```
+   {"as_of": "ISO8601", "cycle": N, "my_value_krw": <total_equity>, "kospi200_price": <price>, "kolon_price": <price>}
+   ```
+   - 한 cycle = 한 줄. 절대 기존 줄 수정 금지 (append-only).
+   - 069500 또는 950160 시세 결측 시: 해당 필드는 직전 값 그대로 (또는 null). my_value_krw는 항상 기록.
+
+5. `latest_snapshot.json` 덮어쓰기 — 대시보드용:
    ```json
    {
      "as_of": "2026-05-06T09:37:00+09:00",

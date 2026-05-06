@@ -53,6 +53,16 @@ $snapshot  = Read-JsonFile (Join-Path $PortfolioRoot 'latest_snapshot.json')
 $tradeLog  = Read-TextFile (Join-Path $PortfolioRoot 'trade_log.md')
 $decisions = Read-TextFile (Join-Path $PortfolioRoot 'decisions.md')
 
+# history.jsonl 로드 (한 줄 = 한 cycle 스냅샷)
+$historyPath = Join-Path $PortfolioRoot 'history.jsonl'
+$historyEntries = @()
+if (Test-Path $historyPath) {
+    $lines = Get-Content -Path $historyPath -Encoding UTF8 | Where-Object { $_ -match '\S' }
+    foreach ($ln in $lines) {
+        try { $historyEntries += ($ln | ConvertFrom-Json) } catch { }
+    }
+}
+
 if ($null -eq $portfolio) {
     Write-Host 'portfolio.json을 찾지 못했습니다.' -ForegroundColor Red
     exit 1
@@ -252,6 +262,112 @@ if ($null -ne $bench) {
 "@
 }
 
+# === 시계열 차트 (3-way, 시작=100 정규화) ===
+$chartHtml = ''
+if ($historyEntries.Count -ge 2) {
+    $w = 1000; $h = 320; $padL = 50; $padR = 16; $padT = 20; $padB = 40
+    $plotW = $w - $padL - $padR
+    $plotH = $h - $padT - $padB
+
+    $base_my = [double]$historyEntries[0].my_value_krw
+    $base_kospi = [double]$historyEntries[0].kospi200_price
+    $base_kolon = [double]$historyEntries[0].kolon_price
+
+    $myIdx = @(); $kospiIdx = @(); $kolonIdx = @(); $labels = @()
+    foreach ($e in $historyEntries) {
+        $myIdx += if ($base_my -gt 0) { ([double]$e.my_value_krw / $base_my) * 100 } else { 100 }
+        $kospiIdx += if ($base_kospi -gt 0 -and $null -ne $e.kospi200_price) { ([double]$e.kospi200_price / $base_kospi) * 100 } else { 100 }
+        $kolonIdx += if ($base_kolon -gt 0 -and $null -ne $e.kolon_price) { ([double]$e.kolon_price / $base_kolon) * 100 } else { 100 }
+        $lbl = ''
+        if ($null -ne $e.as_of) {
+            $dt = [DateTime]::Parse([string]$e.as_of)
+            $lbl = $dt.ToString('M/d HH:mm')
+        }
+        $labels += $lbl
+    }
+
+    $allVals = @() + $myIdx + $kospiIdx + $kolonIdx + 100
+    $vmax = ($allVals | Measure-Object -Maximum).Maximum
+    $vmin = ($allVals | Measure-Object -Minimum).Minimum
+    $vrange = $vmax - $vmin
+    if ($vrange -lt 1) { $vrange = 1 }
+    $vmax = $vmax + $vrange * 0.1
+    $vmin = $vmin - $vrange * 0.1
+    $vrange = $vmax - $vmin
+
+    $n = $historyEntries.Count
+    $xStep = if ($n -gt 1) { $plotW / ($n - 1) } else { 0 }
+
+    $myPts = ''; $kospiPts = ''; $kolonPts = ''
+    $myCircles = ''; $kospiCircles = ''; $kolonCircles = ''
+    for ($i = 0; $i -lt $n; $i++) {
+        $x = $padL + $i * $xStep
+        $myY = $padT + ($vmax - $myIdx[$i]) / $vrange * $plotH
+        $kospiY = $padT + ($vmax - $kospiIdx[$i]) / $vrange * $plotH
+        $kolonY = $padT + ($vmax - $kolonIdx[$i]) / $vrange * $plotH
+        $myPts += ('{0:F1},{1:F1} ' -f $x, $myY)
+        $kospiPts += ('{0:F1},{1:F1} ' -f $x, $kospiY)
+        $kolonPts += ('{0:F1},{1:F1} ' -f $x, $kolonY)
+        $myCircles += ("<circle cx='{0:F1}' cy='{1:F1}' r='3' fill='#4ade80'/>" -f $x, $myY)
+        $kospiCircles += ("<circle cx='{0:F1}' cy='{1:F1}' r='3' fill='#9ca3af'/>" -f $x, $kospiY)
+        $kolonCircles += ("<circle cx='{0:F1}' cy='{1:F1}' r='3' fill='#a78bfa'/>" -f $x, $kolonY)
+    }
+
+    # baseline at 100
+    $baselineY = $padT + ($vmax - 100) / $vrange * $plotH
+
+    # Y-axis 5 ticks
+    $ticks = ''
+    for ($t = 0; $t -lt 5; $t++) {
+        $tval = $vmin + ($vmax - $vmin) * (4 - $t) / 4
+        $ty = $padT + $t / 4 * $plotH
+        $ticks += ("<text x='{0}' y='{1:F1}' fill='#7c8593' font-size='11' text-anchor='end'>{2:N1}</text>" -f ($padL - 8), ($ty + 4), $tval)
+        $ticks += ("<line x1='{0}' y1='{1:F1}' x2='{2}' y2='{1:F1}' stroke='#1f242e' stroke-dasharray='2 2'/>" -f $padL, $ty, ($w - $padR))
+    }
+
+    # X-axis labels (every entry if N<=10, else every Nth)
+    $xLabels = ''
+    $skipLabel = if ($n -le 10) { 1 } else { [math]::Ceiling($n / 10) }
+    for ($i = 0; $i -lt $n; $i++) {
+        if ($i % $skipLabel -ne 0 -and $i -ne ($n - 1)) { continue }
+        $x = $padL + $i * $xStep
+        $xLabels += ("<text x='{0:F1}' y='{1}' fill='#7c8593' font-size='10' text-anchor='middle'>{2}</text>" -f $x, ($h - 18), $labels[$i])
+    }
+
+    $lastMy = $myIdx[-1]; $lastKospi = $kospiIdx[-1]; $lastKolon = $kolonIdx[-1]
+
+    $chartHtml = @"
+<section class="card">
+  <h2>📉 시계열 비교 (시작=100 정규화)</h2>
+  <svg viewBox="0 0 $w $h" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;background:#0f1115;border-radius:8px">
+    $ticks
+    <line x1="$padL" y1="$($baselineY.ToString('F1'))" x2="$($w - $padR)" y2="$($baselineY.ToString('F1'))" stroke="#666" stroke-width="1" stroke-dasharray="4 4"/>
+    <text x="$($w - $padR - 4)" y="$(($baselineY - 4).ToString('F1'))" fill="#888" font-size="10" text-anchor="end">baseline 100</text>
+    <polyline points="$kospiPts" fill="none" stroke="#9ca3af" stroke-width="2"/>
+    $kospiCircles
+    <polyline points="$kolonPts" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    $kolonCircles
+    <polyline points="$myPts" fill="none" stroke="#4ade80" stroke-width="2.5"/>
+    $myCircles
+    $xLabels
+  </svg>
+  <div style="display:flex;gap:24px;justify-content:center;margin-top:14px;font-size:13px;flex-wrap:wrap">
+    <span><span style="display:inline-block;width:14px;height:3px;background:#4ade80;vertical-align:middle;margin-right:6px"></span>나의 모의 포트 ($('{0:N2}' -f $lastMy))</span>
+    <span><span style="display:inline-block;width:14px;height:3px;background:#9ca3af;vertical-align:middle;margin-right:6px"></span>KOSPI 200 ($('{0:N2}' -f $lastKospi))</span>
+    <span><span style="display:inline-block;width:14px;height:3px;background:#a78bfa;vertical-align:middle;margin-right:6px"></span>코오롱티슈진 ($('{0:N2}' -f $lastKolon))</span>
+  </div>
+  <div class="meta">N=$n cycles. 각 cycle 마감 시 portfolio 평가액 / KOSPI 200 종가 / 코오롱티슈진 종가를 시작값으로 나눠 100으로 정규화.</div>
+</section>
+"@
+} else {
+    $chartHtml = @"
+<section class="card">
+  <h2>📉 시계열 비교 (시작=100 정규화)</h2>
+  <p class="empty">차트는 cycle 2 이후부터 표시됩니다 (현재 데이터 포인트 $($historyEntries.Count)개).</p>
+</section>
+"@
+}
+
 # 거래 로그 (마지막 N개)
 function Get-LastBlocks {
     param([string]$Markdown, [int]$Count)
@@ -337,6 +453,7 @@ $html = @"
 
   $summaryHtml
   $benchHtml
+  $chartHtml
   $positionsHtml
 
   <section class="card">
