@@ -22,8 +22,22 @@ $nowKst = Get-Date -Format 'yyyy-MM-ddTHH:mm:ss+09:00'
 $nowDate = Get-Date -Format 'yyyy-MM-dd'
 $nowTime = Get-Date -Format 'HH:mm'
 
+# Helper to run git without PS 5.1 NativeCommandError wrapping stderr
+function Invoke-Git {
+    param([Parameter(ValueFromRemainingArguments=$true)][string[]]$GitArgs)
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    & git @GitArgs
+    $code = $LASTEXITCODE
+    $ErrorActionPreference = $prev
+    return $code
+}
+
 Write-Host ('[1/7] git pull ' + $nowKst) -ForegroundColor Cyan
-& git pull --rebase origin main 2>&1 | ForEach-Object { Write-Host "  $_" }
+$pullCode = Invoke-Git pull --rebase origin main
+if ($pullCode -ne 0) {
+    Write-Host "  [WARN] git pull exit=$pullCode (continuing with local state)" -ForegroundColor Yellow
+}
 
 # ---- helpers ----
 function Get-HankyungPrice {
@@ -468,10 +482,17 @@ Write-Host '[5/7] 대시보드 재빌드' -ForegroundColor Cyan
 
 # ---- step 6: git commit + push ----
 Write-Host '[6/7] git commit + push' -ForegroundColor Cyan
-& git add -A 2>&1 | Out-Null
+[void](Invoke-Git add -A)
 $commitMsg = "rebalance_local — $nowDate $nowTime KST ($($selectedDecisions.Count) trades)"
-& git commit -m $commitMsg 2>&1 | ForEach-Object { Write-Host "  $_" }
-& git push origin main 2>&1 | ForEach-Object { Write-Host "  $_" }
+$commitCode = Invoke-Git commit -m $commitMsg
+if ($commitCode -ne 0) {
+    Write-Host "  [INFO] commit exit=$commitCode (likely nothing to commit)" -ForegroundColor Yellow
+} else {
+    $pushCode = Invoke-Git push origin main
+    if ($pushCode -ne 0) {
+        Write-Host "  [WARN] push exit=$pushCode" -ForegroundColor Yellow
+    }
+}
 
 # ---- step 7: open dashboard ----
 Write-Host '[7/7] 대시보드 오픈' -ForegroundColor Cyan
