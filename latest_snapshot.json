@@ -1,52 +1,49 @@
 {
-  "as_of": "2026-05-06T12:43:00+09:00",
-  "cycle": 2,
+  "as_of": "2026-05-06T14:30:00+09:00",
+  "cycle": "2.5_manual",
   "portfolio": {
-    "cash_krw": 96009659,
-    "positions_value_krw": 3971000,
-    "total_equity_krw": 99980659,
-    "total_pnl_krw": -19341,
-    "total_pnl_pct": -0.01934,
-    "fees_paid_total_krw": 5841,
+    "cash_krw": 66729259,
+    "positions_value_krw": 33274510,
+    "total_equity_krw": 100003769,
+    "total_pnl_krw": 3769,
+    "total_pnl_pct": 0.0038,
+    "fees_paid_total_krw": 10231,
     "realized_pnl_krw": -4869
   },
   "positions": [
-    {
-      "code": "196170",
-      "name": "알테오젠",
-      "shares": 11,
-      "avg_cost": 362227,
-      "last_price": 361000,
-      "unrealized_pnl_krw": -13497,
-      "unrealized_pnl_pct": -0.34,
-      "weight_pct": 3.97
-    }
+    {"code": "196170", "name": "알테오젠", "shares": 27, "avg_cost": 362981, "last_price": 363500, "unrealized_pnl_krw": 14013, "unrealized_pnl_pct": 0.14, "weight_pct": 9.81},
+    {"code": "042700", "name": "한미반도체", "shares": 15, "avg_cost": 385000, "last_price": 385000, "unrealized_pnl_krw": 0, "unrealized_pnl_pct": 0, "weight_pct": 5.78},
+    {"code": "233740", "name": "KODEX 코스닥150 레버리지", "shares": 297, "avg_cost": 16830, "last_price": 16830, "unrealized_pnl_krw": 0, "unrealized_pnl_pct": 0, "weight_pct": 5.00},
+    {"code": "028300", "name": "HLB", "shares": 64, "avg_cost": 61700, "last_price": 61700, "unrealized_pnl_krw": 0, "unrealized_pnl_pct": 0, "weight_pct": 3.95},
+    {"code": "247540", "name": "에코프로비엠", "shares": 17, "avg_cost": 222500, "last_price": 222500, "unrealized_pnl_krw": 0, "unrealized_pnl_pct": 0, "weight_pct": 3.78},
+    {"code": "035420", "name": "NAVER", "shares": 12, "avg_cost": 208000, "last_price": 208000, "unrealized_pnl_krw": 0, "unrealized_pnl_pct": 0, "weight_pct": 2.50},
+    {"code": "035720", "name": "카카오", "shares": 53, "avg_cost": 46400, "last_price": 46400, "unrealized_pnl_krw": 0, "unrealized_pnl_pct": 0, "weight_pct": 2.46}
   ],
   "prices": {
-    "005930": {"price": 259500, "change_pct": 11.61, "fetched_at": "2026-05-06T12:43:00+09:00", "source": "websearch", "confidence": "medium"},
-    "000660": {"price": 1595000, "change_pct": 10.23, "fetched_at": "2026-05-06T12:43:00+09:00", "source": "websearch", "confidence": "high"},
-    "196170": {"price": 361000, "change_pct": -4.12, "fetched_at": "2026-05-06T12:43:00+09:00", "source": "websearch", "confidence": "medium"},
-    "229200": null,
-    "042700": null,
-    "122630": null,
-    "233740": null,
-    "247540": null,
-    "028300": null,
-    "035720": null,
-    "035420": null,
-    "069500": null,
-    "950160": null
+    "005930": {"price": 265250, "change_pct": 14.09, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "000660": {"price": 1598000, "change_pct": 10.44, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "042700": {"price": 385000, "change_pct": 1.85, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "122630": {"price": 147390, "change_pct": 15.34, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "233740": {"price": 16830, "change_pct": -1.49, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "247540": {"price": 222500, "change_pct": 3.25, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "196170": {"price": 363500, "change_pct": -2.55, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "028300": {"price": 61700, "change_pct": 1.31, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "035720": {"price": 46400, "change_pct": -1.49, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "035420": {"price": 208000, "change_pct": -0.48, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "229200": {"price": 20035, "change_pct": -0.69, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "069500": {"price": 113450, "change_pct": 7.74, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"},
+    "950160": {"price": 103000, "change_pct": -1.72, "fetched_at": "2026-05-06T14:30:00+09:00", "source": "hankyung_curl"}
   },
   "benchmarks": {
     "kospi200_start_price": 111915,
-    "kospi200_current_price": null,
-    "kospi200_return_pct": null,
+    "kospi200_current_price": 113450,
+    "kospi200_return_pct": 1.37,
     "kolon_tissuegene_start_price": 104900,
-    "kolon_tissuegene_current_price": null,
-    "kolon_tissuegene_return_pct": null,
-    "user_kolon_position_value_krw": null,
+    "kolon_tissuegene_current_price": 103000,
+    "kolon_tissuegene_return_pct": -1.81,
+    "user_kolon_position_value_krw": 544870000,
     "user_kolon_shares": 5290,
     "user_kolon_avg_cost_krw": 47660,
-    "my_portfolio_return_pct": -0.01934
+    "my_portfolio_return_pct": 0.0038
   }
 }

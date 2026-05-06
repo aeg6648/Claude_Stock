@@ -1,20 +1,80 @@
 {
-  "as_of": "2026-05-06T12:43:00+09:00",
+  "as_of": "2026-05-06T14:30:00+09:00",
   "starting_capital_krw": 100000000,
-  "cash_krw": 96009659,
+  "cash_krw": 66729259,
   "positions": {
     "196170": {
       "code": "196170",
       "name": "알테오젠",
       "exchange": "KOSDAQ",
-      "shares": 11,
-      "avg_cost_krw": 362227,
+      "shares": 27,
+      "avg_cost_krw": 362981,
       "first_buy_date": "2026-05-06",
       "target_weight_pct": 12,
       "bucket": "bio_growth"
+    },
+    "042700": {
+      "code": "042700",
+      "name": "한미반도체",
+      "exchange": "KRX",
+      "shares": 15,
+      "avg_cost_krw": 385000,
+      "first_buy_date": "2026-05-06",
+      "target_weight_pct": 12,
+      "bucket": "semi_supply"
+    },
+    "233740": {
+      "code": "233740",
+      "name": "KODEX 코스닥150 레버리지",
+      "exchange": "KRX",
+      "shares": 297,
+      "avg_cost_krw": 16830,
+      "first_buy_date": "2026-05-06",
+      "target_weight_pct": 10,
+      "bucket": "leverage_etf"
+    },
+    "247540": {
+      "code": "247540",
+      "name": "에코프로비엠",
+      "exchange": "KOSDAQ",
+      "shares": 17,
+      "avg_cost_krw": 222500,
+      "first_buy_date": "2026-05-06",
+      "target_weight_pct": 8,
+      "bucket": "battery_growth"
+    },
+    "028300": {
+      "code": "028300",
+      "name": "HLB",
+      "exchange": "KOSDAQ",
+      "shares": 64,
+      "avg_cost_krw": 61700,
+      "first_buy_date": "2026-05-06",
+      "target_weight_pct": 8,
+      "bucket": "bio_growth"
+    },
+    "035720": {
+      "code": "035720",
+      "name": "카카오",
+      "exchange": "KRX",
+      "shares": 53,
+      "avg_cost_krw": 46400,
+      "first_buy_date": "2026-05-06",
+      "target_weight_pct": 5,
+      "bucket": "tech_growth"
+    },
+    "035420": {
+      "code": "035420",
+      "name": "NAVER",
+      "exchange": "KRX",
+      "shares": 12,
+      "avg_cost_krw": 208000,
+      "first_buy_date": "2026-05-06",
+      "target_weight_pct": 5,
+      "bucket": "tech_growth"
     }
   },
-  "fees_paid_total_krw": 5841,
+  "fees_paid_total_krw": 10231,
   "realized_pnl_krw": -4869,
   "fee_model": {
     "buy_commission_pct": 0.015,
