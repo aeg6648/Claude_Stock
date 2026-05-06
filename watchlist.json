@@ -1,114 +1,106 @@
 {
   "as_of": "2026-05-06",
+  "strategy": "aggressive",
   "tickers": [
-    {
-      "code": "069500",
-      "name": "KODEX 200",
-      "exchange": "KRX",
-      "bucket": "core_index",
-      "target_weight_pct": 25,
-      "google_url": "https://www.google.com/finance/quote/069500:KRX",
-      "hankyung_url": "https://markets.hankyung.com/stock/069500"
-    },
-    {
-      "code": "229200",
-      "name": "KODEX 코스닥150",
-      "exchange": "KRX",
-      "bucket": "core_index",
-      "target_weight_pct": 10,
-      "google_url": "https://www.google.com/finance/quote/229200:KRX",
-      "hankyung_url": "https://markets.hankyung.com/stock/229200"
-    },
     {
       "code": "005930",
       "name": "삼성전자",
       "exchange": "KRX",
-      "bucket": "semi_ai",
-      "target_weight_pct": 8,
+      "bucket": "mega_semi",
+      "target_weight_pct": 15,
       "google_url": "https://www.google.com/finance/quote/005930:KRX",
-      "investing_url": "https://www.investing.com/equities/samsung-electronics-co-ltd",
       "hankyung_url": "https://markets.hankyung.com/stock/005930"
     },
     {
       "code": "000660",
       "name": "SK하이닉스",
       "exchange": "KRX",
-      "bucket": "semi_ai",
-      "target_weight_pct": 7,
+      "bucket": "mega_semi",
+      "target_weight_pct": 15,
       "google_url": "https://www.google.com/finance/quote/000660:KRX",
       "hankyung_url": "https://markets.hankyung.com/stock/000660"
     },
     {
-      "code": "091160",
-      "name": "KODEX 반도체",
+      "code": "042700",
+      "name": "한미반도체",
       "exchange": "KRX",
-      "bucket": "semi_ai",
-      "target_weight_pct": 5,
-      "google_url": "https://www.google.com/finance/quote/091160:KRX",
-      "hankyung_url": "https://markets.hankyung.com/stock/091160"
+      "bucket": "semi_supply",
+      "target_weight_pct": 12,
+      "google_url": "https://www.google.com/finance/quote/042700:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/042700"
     },
     {
-      "code": "373220",
-      "name": "LG에너지솔루션",
+      "code": "122630",
+      "name": "KODEX 레버리지",
       "exchange": "KRX",
-      "bucket": "battery_auto",
-      "target_weight_pct": 5,
-      "google_url": "https://www.google.com/finance/quote/373220:KRX",
-      "hankyung_url": "https://markets.hankyung.com/stock/373220"
+      "bucket": "leverage_etf",
+      "target_weight_pct": 10,
+      "google_url": "https://www.google.com/finance/quote/122630:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/122630"
     },
     {
-      "code": "005380",
-      "name": "현대차",
+      "code": "233740",
+      "name": "KODEX 코스닥150 레버리지",
       "exchange": "KRX",
-      "bucket": "battery_auto",
-      "target_weight_pct": 5,
-      "google_url": "https://www.google.com/finance/quote/005380:KRX",
-      "hankyung_url": "https://markets.hankyung.com/stock/005380"
+      "bucket": "leverage_etf",
+      "target_weight_pct": 10,
+      "google_url": "https://www.google.com/finance/quote/233740:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/233740"
     },
     {
-      "code": "305720",
-      "name": "KODEX 2차전지산업",
-      "exchange": "KRX",
-      "bucket": "battery_auto",
-      "target_weight_pct": 5,
-      "google_url": "https://www.google.com/finance/quote/305720:KRX",
-      "hankyung_url": "https://markets.hankyung.com/stock/305720"
-    },
-    {
-      "code": "105560",
-      "name": "KB금융",
-      "exchange": "KRX",
-      "bucket": "financial_div",
-      "target_weight_pct": 5,
-      "google_url": "https://www.google.com/finance/quote/105560:KRX",
-      "hankyung_url": "https://markets.hankyung.com/stock/105560"
-    },
-    {
-      "code": "161510",
-      "name": "ARIRANG 고배당주",
-      "exchange": "KRX",
-      "bucket": "financial_div",
-      "target_weight_pct": 5,
-      "google_url": "https://www.google.com/finance/quote/161510:KRX",
-      "hankyung_url": "https://markets.hankyung.com/stock/161510"
-    },
-    {
-      "code": "207940",
-      "name": "삼성바이오로직스",
-      "exchange": "KRX",
-      "bucket": "bio",
-      "target_weight_pct": 5,
-      "google_url": "https://www.google.com/finance/quote/207940:KRX",
-      "hankyung_url": "https://markets.hankyung.com/stock/207940"
+      "code": "247540",
+      "name": "에코프로비엠",
+      "exchange": "KOSDAQ",
+      "bucket": "battery_growth",
+      "target_weight_pct": 8,
+      "google_url": "https://www.google.com/finance/quote/247540:KOSDAQ",
+      "hankyung_url": "https://markets.hankyung.com/stock/247540"
     },
     {
       "code": "196170",
       "name": "알테오젠",
       "exchange": "KOSDAQ",
-      "bucket": "growth_kosdaq",
-      "target_weight_pct": 5,
+      "bucket": "bio_growth",
+      "target_weight_pct": 12,
       "google_url": "https://www.google.com/finance/quote/196170:KOSDAQ",
       "hankyung_url": "https://markets.hankyung.com/stock/196170"
+    },
+    {
+      "code": "028300",
+      "name": "HLB",
+      "exchange": "KOSDAQ",
+      "bucket": "bio_growth",
+      "target_weight_pct": 8,
+      "google_url": "https://www.google.com/finance/quote/028300:KOSDAQ",
+      "hankyung_url": "https://markets.hankyung.com/stock/028300"
+    },
+    {
+      "code": "035720",
+      "name": "카카오",
+      "exchange": "KRX",
+      "bucket": "tech_growth",
+      "target_weight_pct": 5,
+      "google_url": "https://www.google.com/finance/quote/035720:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/035720"
+    },
+    {
+      "code": "035420",
+      "name": "NAVER",
+      "exchange": "KRX",
+      "bucket": "tech_growth",
+      "target_weight_pct": 5,
+      "google_url": "https://www.google.com/finance/quote/035420:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/035420"
+    },
+    {
+      "code": "229200",
+      "name": "KODEX 코스닥150",
+      "exchange": "KRX",
+      "bucket": "legacy_to_exit",
+      "target_weight_pct": 0,
+      "google_url": "https://www.google.com/finance/quote/229200:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/229200",
+      "note": "공격형 전환 전 보유분. 다음 차수에서 매도 후 233740 레버리지로 전환."
     }
   ],
   "benchmarks": [
@@ -116,7 +108,7 @@
       "code": "069500",
       "name": "KODEX 200",
       "role": "시장 벤치마크 (수익률 비교용)",
-      "note": "watchlist에도 매매 대상으로 포함. mark-to-market만 추가로 추적"
+      "note": "watchlist에 매매 대상 아님. mark-to-market만 추적"
     },
     {
       "code": "950160",
@@ -134,13 +126,13 @@
     }
   ],
   "buckets": {
-    "core_index": {"target_pct": 35, "rationale": "시장 베타. 종목 선택 리스크 회피"},
-    "semi_ai": {"target_pct": 20, "rationale": "AI/메모리 사이클 노출. 단 추격매수 금지"},
-    "battery_auto": {"target_pct": 15, "rationale": "사이클 분산"},
-    "financial_div": {"target_pct": 10, "rationale": "변동성 완충 + 배당수익"},
-    "bio": {"target_pct": 5, "rationale": "베타 분산"},
-    "growth_kosdaq": {"target_pct": 5, "rationale": "KOSDAQ 노출 (소형)"},
-    "cash": {"target_pct": 10, "rationale": "조정/오류 대응"}
+    "mega_semi": {"target_pct": 30, "rationale": "AI 메모리 사이클 핵심 노출. 2종목 (삼성전자 + SK하이닉스)"},
+    "semi_supply": {"target_pct": 12, "rationale": "HBM 장비/공급망 모멘텀 (한미반도체)"},
+    "leverage_etf": {"target_pct": 20, "rationale": "KOSPI/KOSDAQ 2배 베타. 단기 모멘텀 증폭. ※ 횡보 시 decay 주의"},
+    "battery_growth": {"target_pct": 8, "rationale": "2차전지 사이클 베팅 (셀+양극재)"},
+    "bio_growth": {"target_pct": 20, "rationale": "고변동성 KOSDAQ 바이오 모멘텀 (알테오젠 + HLB)"},
+    "tech_growth": {"target_pct": 10, "rationale": "AI 플랫폼 (카카오 + NAVER)"},
+    "cash": {"target_pct": 0, "rationale": "공격형 — 풀 익스포저, 현금 플로어 0%"}
   },
   "liquidity_filter_krw": 1000000000
 }

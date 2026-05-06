@@ -1,7 +1,8 @@
 # Korean Stock Mock Portfolio (₩100,000,000)
 
 **Purpose**: 사용자가 Claude의 분석/판단 능력을 검증하기 위한 모의 운용.
-**Period**: 2026-05-06 ~ ~2026-06-05 (22거래일).
+**Period**: 2026-05-06 ~ ~2026-08-05 (~64거래일, 3개월).
+**Strategy**: AGGRESSIVE (공격형) — 집중 / 모멘텀 추격 / 레버리지 ETF / 풀 익스포저
 **Cadence**: KST 09:37 / 12:43 / 15:13, 평일.
 **Mechanism**: `/schedule` 원격 에이전트.
 
