@@ -1,0 +1,146 @@
+{
+  "as_of": "2026-05-06",
+  "tickers": [
+    {
+      "code": "069500",
+      "name": "KODEX 200",
+      "exchange": "KRX",
+      "bucket": "core_index",
+      "target_weight_pct": 25,
+      "google_url": "https://www.google.com/finance/quote/069500:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/069500"
+    },
+    {
+      "code": "229200",
+      "name": "KODEX 코스닥150",
+      "exchange": "KRX",
+      "bucket": "core_index",
+      "target_weight_pct": 10,
+      "google_url": "https://www.google.com/finance/quote/229200:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/229200"
+    },
+    {
+      "code": "005930",
+      "name": "삼성전자",
+      "exchange": "KRX",
+      "bucket": "semi_ai",
+      "target_weight_pct": 8,
+      "google_url": "https://www.google.com/finance/quote/005930:KRX",
+      "investing_url": "https://www.investing.com/equities/samsung-electronics-co-ltd",
+      "hankyung_url": "https://markets.hankyung.com/stock/005930"
+    },
+    {
+      "code": "000660",
+      "name": "SK하이닉스",
+      "exchange": "KRX",
+      "bucket": "semi_ai",
+      "target_weight_pct": 7,
+      "google_url": "https://www.google.com/finance/quote/000660:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/000660"
+    },
+    {
+      "code": "091160",
+      "name": "KODEX 반도체",
+      "exchange": "KRX",
+      "bucket": "semi_ai",
+      "target_weight_pct": 5,
+      "google_url": "https://www.google.com/finance/quote/091160:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/091160"
+    },
+    {
+      "code": "373220",
+      "name": "LG에너지솔루션",
+      "exchange": "KRX",
+      "bucket": "battery_auto",
+      "target_weight_pct": 5,
+      "google_url": "https://www.google.com/finance/quote/373220:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/373220"
+    },
+    {
+      "code": "005380",
+      "name": "현대차",
+      "exchange": "KRX",
+      "bucket": "battery_auto",
+      "target_weight_pct": 5,
+      "google_url": "https://www.google.com/finance/quote/005380:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/005380"
+    },
+    {
+      "code": "305720",
+      "name": "KODEX 2차전지산업",
+      "exchange": "KRX",
+      "bucket": "battery_auto",
+      "target_weight_pct": 5,
+      "google_url": "https://www.google.com/finance/quote/305720:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/305720"
+    },
+    {
+      "code": "105560",
+      "name": "KB금융",
+      "exchange": "KRX",
+      "bucket": "financial_div",
+      "target_weight_pct": 5,
+      "google_url": "https://www.google.com/finance/quote/105560:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/105560"
+    },
+    {
+      "code": "161510",
+      "name": "ARIRANG 고배당주",
+      "exchange": "KRX",
+      "bucket": "financial_div",
+      "target_weight_pct": 5,
+      "google_url": "https://www.google.com/finance/quote/161510:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/161510"
+    },
+    {
+      "code": "207940",
+      "name": "삼성바이오로직스",
+      "exchange": "KRX",
+      "bucket": "bio",
+      "target_weight_pct": 5,
+      "google_url": "https://www.google.com/finance/quote/207940:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/207940"
+    },
+    {
+      "code": "196170",
+      "name": "알테오젠",
+      "exchange": "KOSDAQ",
+      "bucket": "growth_kosdaq",
+      "target_weight_pct": 5,
+      "google_url": "https://www.google.com/finance/quote/196170:KOSDAQ",
+      "hankyung_url": "https://markets.hankyung.com/stock/196170"
+    }
+  ],
+  "benchmarks": [
+    {
+      "code": "069500",
+      "name": "KODEX 200",
+      "role": "시장 벤치마크 (수익률 비교용)",
+      "note": "watchlist에도 매매 대상으로 포함. mark-to-market만 추가로 추적"
+    },
+    {
+      "code": "950160",
+      "name": "코오롱티슈진",
+      "exchange": "KOSDAQ",
+      "role": "사용자 실제 보유 (벤치마크 전용 — 모의 매매 안 함)",
+      "user_position": {
+        "shares": 5290,
+        "avg_cost_krw": 47660,
+        "cost_basis_krw": 252121400,
+        "as_of_initial_check": "2026-05-06"
+      },
+      "google_url": "https://www.google.com/finance/quote/950160:KOSDAQ",
+      "hankyung_url": "https://markets.hankyung.com/stock/950160"
+    }
+  ],
+  "buckets": {
+    "core_index": {"target_pct": 35, "rationale": "시장 베타. 종목 선택 리스크 회피"},
+    "semi_ai": {"target_pct": 20, "rationale": "AI/메모리 사이클 노출. 단 추격매수 금지"},
+    "battery_auto": {"target_pct": 15, "rationale": "사이클 분산"},
+    "financial_div": {"target_pct": 10, "rationale": "변동성 완충 + 배당수익"},
+    "bio": {"target_pct": 5, "rationale": "베타 분산"},
+    "growth_kosdaq": {"target_pct": 5, "rationale": "KOSDAQ 노출 (소형)"},
+    "cash": {"target_pct": 10, "rationale": "조정/오류 대응"}
+  },
+  "liquidity_filter_krw": 1000000000
+}

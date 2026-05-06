@@ -1,0 +1,35 @@
+{
+  "as_of": "2026-05-06T10:30:00+09:00",
+  "starting_capital_krw": 100000000,
+  "cash_krw": 96406221,
+  "positions": {
+    "229200": {
+      "code": "229200",
+      "name": "KODEX 코스닥150",
+      "exchange": "KRX",
+      "shares": 124,
+      "avg_cost_krw": 20135,
+      "first_buy_date": "2026-05-06",
+      "target_weight_pct": 10,
+      "bucket": "core_index"
+    },
+    "196170": {
+      "code": "196170",
+      "name": "알테오젠",
+      "exchange": "KOSDAQ",
+      "shares": 3,
+      "avg_cost_krw": 365500,
+      "first_buy_date": "2026-05-06",
+      "target_weight_pct": 5,
+      "bucket": "growth_kosdaq"
+    }
+  },
+  "fees_paid_total_krw": 539,
+  "realized_pnl_krw": 0,
+  "fee_model": {
+    "buy_commission_pct": 0.015,
+    "sell_commission_pct": 0.015,
+    "sell_tax_pct": 0.18,
+    "note": "수수료 0.015% + 매도세 0.18% (코스피·코스닥 동일 가정). ETF는 매도세 면제이지만 보수적으로 동일 적용."
+  }
+}

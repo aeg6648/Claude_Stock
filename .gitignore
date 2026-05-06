@@ -1,0 +1,8 @@
+# Dashboard output is regenerated locally on each view; not state.
+dashboard/dashboard.html
+
+# OS / editor cruft
+Thumbs.db
+.DS_Store
+*.swp
+.vscode/
