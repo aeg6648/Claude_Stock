@@ -384,9 +384,33 @@ function Get-LastBlocks {
     return @($blocks[-$Count..-1])
 }
 
-$tradeBlocks = Get-LastBlocks -Markdown $tradeLog -Count 10
-$tradeHtml = if ($tradeBlocks.Count -gt 0) {
-    '<pre class="md">' + (Encode-Html ($tradeBlocks -join "`n`n")) + '</pre>'
+$recentTradeRows = ''
+$recentTrades = $tradesArr | Sort-Object @{e={$_.Date};desc=$true}, @{e={$_.Time};desc=$true} | Select-Object -First 5
+foreach ($t in $recentTrades) {
+    $typeClass = if ($t.Type -eq 'BUY') { 'buy' } else { 'sell' }
+    $typeIcon = if ($t.Type -eq 'BUY') { '▲' } else { '▼' }
+    $recentTradeRows += @"
+<tr>
+  <td><small>$(Encode-Html $t.Date) $(Encode-Html $t.Time)</small></td>
+  <td><span class="type-badge $typeClass">$typeIcon $($t.Type)</span></td>
+  <td><span class="code">$(Encode-Html $t.Code)</span> $(Encode-Html $t.Name)</td>
+  <td class="num">$('{0:N0}' -f $t.Shares)주 @ $(Format-KRW $t.Price)</td>
+  <td class="num"><strong>$(Format-KRW $t.Amount)</strong></td>
+</tr>
+"@
+}
+$tradeHtml = if ($tradesArr.Count -gt 0) {
+    @"
+<table style="width:100%;font-size:13px">
+  <thead><tr>
+    <th>일시</th><th>구분</th><th>종목</th><th class="num">수량 @ 단가</th><th class="num">금액</th>
+  </tr></thead>
+  <tbody>$recentTradeRows</tbody>
+</table>
+<div style="margin-top:14px;text-align:center">
+  <a href="trades.html" style="color:#4ade80;text-decoration:none;font-size:14px;display:inline-block;padding:10px 20px;background:#1a1e28;border:1px solid #2a2f3a;border-radius:6px">📋 전체 거래 기록 보기 ($totalTrades건) →</a>
+</div>
+"@
 } else {
     '<p class="empty">아직 체결된 거래가 없습니다.</p>'
 }
@@ -397,6 +421,156 @@ $decHtml = if ($decBlocks.Count -gt 0) {
 } else {
     '<p class="empty">아직 점검 기록이 없습니다.</p>'
 }
+
+# === 거래 기록 파싱 (trades.html용) ===
+function Parse-Trades {
+    param([string]$Markdown)
+    $trades = @()
+    if ([string]::IsNullOrWhiteSpace($Markdown)) { return $trades }
+    $parts = [regex]::Split($Markdown, '(?m)^## ')
+    if ($parts.Count -le 1) { return $trades }
+    foreach ($block in $parts[1..($parts.Count - 1)]) {
+        $block = $block.Trim()
+        if ($block -notmatch '^(\d{4}-\d{2}-\d{2})\s+(\d{2}:\d{2})\s+KST\s*\|\s*(BUY|SELL)\s*\|\s*(\d{6})\s+([^\r\n\(]+)') { continue }
+        $date = $matches[1]; $time = $matches[2]; $type = $matches[3]; $code = $matches[4]; $name = $matches[5].Trim()
+        $shares = 0; $price = 0; $amount = 0; $fee = 0; $reason = ''
+        if ($block -match '수량:\s*([0-9,]+)주\s*@\s*₩([0-9,]+)') {
+            $shares = [int]([string]$matches[1] -replace ',', '')
+            $price = [int]([string]$matches[2] -replace ',', '')
+        }
+        if ($block -match '체결금액:\s*₩([0-9,]+)') { $amount = [int]([string]$matches[1] -replace ',', '') }
+        if ($block -match '수수료:\s*₩([0-9,]+)') { $fee = [int]([string]$matches[1] -replace ',', '') }
+        if ($block -match '(?m)^- 사유:\s*(.+?)\s*$') { $reason = $matches[1].Trim() }
+        $trades += [PSCustomObject]@{
+            Date = $date; Time = $time; Type = $type; Code = $code; Name = $name
+            Shares = $shares; Price = $price; Amount = $amount; Fee = $fee; Reason = $reason
+        }
+    }
+    return $trades
+}
+
+$tradesArr = @(Parse-Trades -Markdown $tradeLog)
+$totalTrades = $tradesArr.Count
+$totalBuy = @($tradesArr | Where-Object { $_.Type -eq 'BUY' }).Count
+$totalSell = @($tradesArr | Where-Object { $_.Type -eq 'SELL' }).Count
+$totalAmount = ($tradesArr | Measure-Object -Sum Amount).Sum
+$totalFee = ($tradesArr | Measure-Object -Sum Fee).Sum
+if ($null -eq $totalAmount) { $totalAmount = 0 }
+if ($null -eq $totalFee) { $totalFee = 0 }
+
+# Build trades.html (separate page)
+$tradeRows = ''
+foreach ($t in ($tradesArr | Sort-Object @{e={$_.Date};desc=$true}, @{e={$_.Time};desc=$true})) {
+    $typeClass = if ($t.Type -eq 'BUY') { 'buy' } else { 'sell' }
+    $typeIcon = if ($t.Type -eq 'BUY') { '▲ 매수' } else { '▼ 매도' }
+    $tradeRows += @"
+<tr class="trade-row $typeClass" data-type="$($t.Type)">
+  <td class="num">$(Encode-Html $t.Date)<br><small>$(Encode-Html $t.Time) KST</small></td>
+  <td><span class="type-badge $typeClass">$typeIcon</span></td>
+  <td><span class="code">$(Encode-Html $t.Code)</span></td>
+  <td>$(Encode-Html $t.Name)</td>
+  <td class="num">$('{0:N0}' -f $t.Shares)</td>
+  <td class="num">$(Format-KRW $t.Price)</td>
+  <td class="num"><strong>$(Format-KRW $t.Amount)</strong></td>
+  <td class="num">$(Format-KRW $t.Fee)</td>
+  <td class="reason-cell">$(Encode-Html $t.Reason)</td>
+</tr>
+"@
+}
+
+$tradesHtml = @"
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>거래 기록 — Korean Stock Mock Portfolio</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, 'Segoe UI', 'Malgun Gothic', sans-serif; background: #0f1115; color: #e6e8eb; margin: 0; padding: 24px; line-height: 1.5; }
+  h1 { margin: 0 0 4px 0; font-size: 28px; }
+  .container { max-width: 1400px; margin: 0 auto; }
+  .header-meta { color: #7c8593; font-size: 13px; margin-bottom: 24px; }
+  .card { background: #161922; border: 1px solid #2a2f3a; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .back-link { display: inline-block; color: #4ade80; text-decoration: none; margin-bottom: 16px; font-size: 14px; }
+  .back-link:hover { text-decoration: underline; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .stats > div { background: #0f1115; border: 1px solid #2a2f3a; border-radius: 8px; padding: 16px; }
+  .stats label { color: #7c8593; font-size: 12px; display: block; }
+  .stats .val { font-size: 24px; font-weight: 700; margin-top: 4px; }
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+  .filter-btn { background: #2a2f3a; color: #b9c1cc; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .filter-btn.active { background: #4ade80; color: #0f1115; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; color: #b9c1cc; font-weight: 600; font-size: 12px; border-bottom: 2px solid #2a2f3a; background: #1a1e28; position: sticky; top: 0; }
+  td { padding: 12px; border-bottom: 1px solid #1f242e; vertical-align: top; }
+  tr.trade-row.buy { background: rgba(74, 222, 128, 0.04); }
+  tr.trade-row.sell { background: rgba(248, 113, 113, 0.04); }
+  tr.trade-row:hover { background: #1a1e28; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .code { font-family: 'Consolas', monospace; background: #2a2f3a; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  .type-badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .type-badge.buy { background: #166534; color: #4ade80; }
+  .type-badge.sell { background: #991b1b; color: #f87171; }
+  .reason-cell { color: #b9c1cc; max-width: 380px; line-height: 1.4; }
+  small { font-size: 11px; color: #7c8593; }
+  .empty { color: #7c8593; font-style: italic; padding: 32px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="dashboard.html" class="back-link">← 대시보드로 돌아가기</a>
+  <h1>📋 전체 거래 기록</h1>
+  <div class="header-meta">한국 주식 모의 포트폴리오 — 2026-05-06 ~ 운영 중</div>
+
+  <section class="card">
+    <div class="stats">
+      <div><label>총 거래 건수</label><div class="val">$totalTrades</div><small>매수 $totalBuy · 매도 $totalSell</small></div>
+      <div><label>총 거래대금</label><div class="val">$(Format-KRW $totalAmount)</div></div>
+      <div><label>누적 수수료/세금</label><div class="val">$(Format-KRW $totalFee)</div></div>
+      <div><label>실현 손익</label><div class="val $(Get-PnlClass $realizedPnl)">$(Format-KRW $realizedPnl)</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filt(this,'all')">전체</button>
+      <button class="filter-btn" onclick="filt(this,'BUY')">매수만</button>
+      <button class="filter-btn" onclick="filt(this,'SELL')">매도만</button>
+    </div>
+    <table>
+      <thead><tr>
+        <th>일시 (KST)</th>
+        <th>구분</th>
+        <th>코드</th>
+        <th>종목명</th>
+        <th class="num">수량</th>
+        <th class="num">단가</th>
+        <th class="num">체결금액</th>
+        <th class="num">수수료</th>
+        <th>사유</th>
+      </tr></thead>
+      <tbody id="tbody">
+        $(if ($tradesArr.Count -gt 0) { $tradeRows } else { '<tr><td colspan="9" class="empty">아직 체결된 거래가 없습니다.</td></tr>' })
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+function filt(btn, type) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.trade-row').forEach(r => {
+    r.style.display = (type === 'all' || r.dataset.type === type) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
+"@
+
+$tradesPath = Join-Path $PSScriptRoot 'trades.html'
+$utf8NoBom = New-Object System.Text.UTF8Encoding $false
+[System.IO.File]::WriteAllText($tradesPath, $tradesHtml, $utf8NoBom)
 
 # === 최종 HTML ===
 $generated = (Get-Date -Format 'yyyy-MM-dd HH:mm:ss zzz')
@@ -445,6 +619,9 @@ $html = @"
   .bar.zero { background: #2a2f3a; }
   .bench-val { text-align: right; font-weight: 600; font-size: 16px; }
   pre.md { background: #0f1115; border: 1px solid #2a2f3a; border-radius: 8px; padding: 16px; overflow-x: auto; font-size: 12px; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+  .type-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+  .type-badge.buy { background: #166534; color: #4ade80; }
+  .type-badge.sell { background: #991b1b; color: #f87171; }
   .footer { color: #7c8593; font-size: 11px; text-align: center; margin-top: 32px; padding-top: 16px; border-top: 1px solid #2a2f3a; }
 </style>
 </head>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>거래 기록 — Korean Stock Mock Portfolio</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, 'Segoe UI', 'Malgun Gothic', sans-serif; background: #0f1115; color: #e6e8eb; margin: 0; padding: 24px; line-height: 1.5; }
+  h1 { margin: 0 0 4px 0; font-size: 28px; }
+  .container { max-width: 1400px; margin: 0 auto; }
+  .header-meta { color: #7c8593; font-size: 13px; margin-bottom: 24px; }
+  .card { background: #161922; border: 1px solid #2a2f3a; border-radius: 12px; padding: 24px; margin-bottom: 20px; }
+  .back-link { display: inline-block; color: #4ade80; text-decoration: none; margin-bottom: 16px; font-size: 14px; }
+  .back-link:hover { text-decoration: underline; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .stats > div { background: #0f1115; border: 1px solid #2a2f3a; border-radius: 8px; padding: 16px; }
+  .stats label { color: #7c8593; font-size: 12px; display: block; }
+  .stats .val { font-size: 24px; font-weight: 700; margin-top: 4px; }
+  .filter-bar { display: flex; gap: 8px; margin-bottom: 16px; }
+  .filter-btn { background: #2a2f3a; color: #b9c1cc; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; }
+  .filter-btn.active { background: #4ade80; color: #0f1115; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { text-align: left; padding: 10px 12px; color: #b9c1cc; font-weight: 600; font-size: 12px; border-bottom: 2px solid #2a2f3a; background: #1a1e28; position: sticky; top: 0; }
+  td { padding: 12px; border-bottom: 1px solid #1f242e; vertical-align: top; }
+  tr.trade-row.buy { background: rgba(74, 222, 128, 0.04); }
+  tr.trade-row.sell { background: rgba(248, 113, 113, 0.04); }
+  tr.trade-row:hover { background: #1a1e28; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .code { font-family: 'Consolas', monospace; background: #2a2f3a; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+  .type-badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+  .type-badge.buy { background: #166534; color: #4ade80; }
+  .type-badge.sell { background: #991b1b; color: #f87171; }
+  .reason-cell { color: #b9c1cc; max-width: 380px; line-height: 1.4; }
+  small { font-size: 11px; color: #7c8593; }
+  .empty { color: #7c8593; font-style: italic; padding: 32px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="dashboard.html" class="back-link">← 대시보드로 돌아가기</a>
+  <h1>📋 전체 거래 기록</h1>
+  <div class="header-meta">한국 주식 모의 포트폴리오 — 2026-05-06 ~ 운영 중</div>
+
+  <section class="card">
+    <div class="stats">
+      <div><label>총 거래 건수</label><div class="val">15</div><small>매수 14 · 매도 1</small></div>
+      <div><label>총 거래대금</label><div class="val">₩54,219,490</div></div>
+      <div><label>누적 수수료/세금</label><div class="val">₩8,131</div></div>
+      <div><label>실현 손익</label><div class="val neg">₩-4,869</div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="filter-bar">
+      <button class="filter-btn active" onclick="filt(this,'all')">전체</button>
+      <button class="filter-btn" onclick="filt(this,'BUY')">매수만</button>
+      <button class="filter-btn" onclick="filt(this,'SELL')">매도만</button>
+    </div>
+    <table>
+      <thead><tr>
+        <th>일시 (KST)</th>
+        <th>구분</th>
+        <th>코드</th>
+        <th>종목명</th>
+        <th class="num">수량</th>
+        <th class="num">단가</th>
+        <th class="num">체결금액</th>
+        <th class="num">수수료</th>
+        <th>사유</th>
+      </tr></thead>
+      <tbody id="tbody">
+        <tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>15:13 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">247540</span></td>
+  <td>에코프로비엠 [Cycle 3]</td>
+  <td class="num">17</td>
+  <td class="num">₩222,500</td>
+  <td class="num"><strong>₩3,782,500</strong></td>
+  <td class="num">₩567</td>
+  <td class="reason-cell">Rule 8 횡보 추가 매수 — 일중 +3.25% &amp; 보유 3.78% &lt; 목표 8%×0.5=4%. 분할 2차.</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>15:13 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">042700</span></td>
+  <td>한미반도체 [Cycle 3]</td>
+  <td class="num">15</td>
+  <td class="num">₩385,000</td>
+  <td class="num"><strong>₩5,775,000</strong></td>
+  <td class="num">₩866</td>
+  <td class="reason-cell">Rule 8 횡보 추가 매수 — 일중 +1.85% &amp; 보유 5.78% &lt; 목표 12%×0.5=6%. 분할 2차 (목표 50%).</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>15:13 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">035720</span></td>
+  <td>카카오 [Cycle 3]</td>
+  <td class="num">53</td>
+  <td class="num">₩46,400</td>
+  <td class="num"><strong>₩2,459,200</strong></td>
+  <td class="num">₩369</td>
+  <td class="reason-cell">Rule 8 횡보 추가 매수 — 일중 -1.49% &amp; 보유 2.46% &lt; 목표 5%×0.5=2.5%. 분할 2차.</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>15:13 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">028300</span></td>
+  <td>HLB [Cycle 3]</td>
+  <td class="num">64</td>
+  <td class="num">₩61,700</td>
+  <td class="num"><strong>₩3,948,800</strong></td>
+  <td class="num">₩592</td>
+  <td class="reason-cell">Rule 8 횡보 추가 매수 — 일중 +1.31% &amp; 보유 3.95% &lt; 목표 8%×0.5=4%. 분할 2차.</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>14:30 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">035720</span></td>
+  <td>카카오</td>
+  <td class="num">53</td>
+  <td class="num">₩46,400</td>
+  <td class="num"><strong>₩2,459,200</strong></td>
+  <td class="num">₩369</td>
+  <td class="reason-cell">Rule 8 신규 — 일중 -1.49% &amp; 미보유. tech_growth 첫 진입 (목표 5% × 50%).</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>14:30 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">035420</span></td>
+  <td>NAVER</td>
+  <td class="num">12</td>
+  <td class="num">₩208,000</td>
+  <td class="num"><strong>₩2,496,000</strong></td>
+  <td class="num">₩374</td>
+  <td class="reason-cell">Rule 8 신규 — 일중 -0.48% &amp; 미보유. tech_growth 두 번째 종목 첫 진입 (목표 5% × 50%).</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>14:30 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">196170</span></td>
+  <td>알테오젠</td>
+  <td class="num">16</td>
+  <td class="num">₩363,500</td>
+  <td class="num"><strong>₩5,816,000</strong></td>
+  <td class="num">₩872</td>
+  <td class="reason-cell">Rule 7 눌림 매수 추가 — 일중 -2.55% &amp; 보유 4% &lt; 목표 12%×0.5=6%. 정상 단위 (목표 × 50%) 적용 (Bash+curl source라 신뢰도 높음).</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>14:30 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">028300</span></td>
+  <td>HLB</td>
+  <td class="num">64</td>
+  <td class="num">₩61,700</td>
+  <td class="num"><strong>₩3,948,800</strong></td>
+  <td class="num">₩592</td>
+  <td class="reason-cell">Rule 8 신규 — 일중 +1.31% &amp; 미보유. bio_growth 두 번째 종목 첫 진입 (목표 8% × 50%).</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>14:30 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">042700</span></td>
+  <td>한미반도체</td>
+  <td class="num">15</td>
+  <td class="num">₩385,000</td>
+  <td class="num"><strong>₩5,775,000</strong></td>
+  <td class="num">₩866</td>
+  <td class="reason-cell">Rule 8 횡보 신규 진입 — 일중 +1.85% (-1.5%~+5% 범위) &amp; 미보유. semi_supply 버킷 첫 진입 (목표 12% × 50%).</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>14:30 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">233740</span></td>
+  <td>KODEX 코스닥150 레버리지</td>
+  <td class="num">297</td>
+  <td class="num">₩16,830</td>
+  <td class="num"><strong>₩4,998,510</strong></td>
+  <td class="num">₩750</td>
+  <td class="reason-cell">Rule 8 횡보 신규 진입 — 일중 -1.49% (-1.5% 임계 직전) &amp; 미보유. leverage_etf 버킷 첫 진입 (목표 10% × 50%).</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>14:30 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">247540</span></td>
+  <td>에코프로비엠</td>
+  <td class="num">17</td>
+  <td class="num">₩222,500</td>
+  <td class="num"><strong>₩3,782,500</strong></td>
+  <td class="num">₩567</td>
+  <td class="reason-cell">Rule 8 신규 — 일중 +3.25% &amp; 미보유. battery_growth 첫 진입 (목표 8% × 50%).</td>
+</tr><tr class="trade-row sell" data-type="SELL">
+  <td class="num">2026-05-06<br><small>12:43 KST</small></td>
+  <td><span class="type-badge sell">▼ 매도</span></td>
+  <td><span class="code">229200</span></td>
+  <td>KODEX 코스닥150</td>
+  <td class="num">124</td>
+  <td class="num">₩20,135</td>
+  <td class="num"><strong>₩2,496,740</strong></td>
+  <td class="num">₩375</td>
+  <td class="reason-cell">Rule 4 강제 퇴출 (bucket=legacy_to_exit, target_weight_pct=0). 공격형 전략 전환으로 포지션 청산.</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>12:43 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">196170</span></td>
+  <td>알테오젠</td>
+  <td class="num">8</td>
+  <td class="num">₩361,000</td>
+  <td class="num"><strong>₩2,888,000</strong></td>
+  <td class="num">₩433</td>
+  <td class="reason-cell">Rule 7 눌림 매수 — 일중 -4.12% (≤-1.5%) &amp; 보유비중 1.08% &lt; 목표12%×50%=6%. WebSearch 가격 사용으로 단위 절반 적용.</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>10:30 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">229200</span></td>
+  <td>KODEX 코스닥150</td>
+  <td class="num">124</td>
+  <td class="num">₩20,135</td>
+  <td class="num"><strong>₩2,496,740</strong></td>
+  <td class="num">₩375</td>
+  <td class="reason-cell">첫 진입 (분할 1차, 목표 10% 중 25%). 오늘 KOSPI 대형주가 AI 랠리(+5~12%) 중인 반면 코스닥150은 -0.2%로 약세. 추격을 피하고 코스닥 베타 분산 진입.</td>
+</tr><tr class="trade-row buy" data-type="BUY">
+  <td class="num">2026-05-06<br><small>10:30 KST</small></td>
+  <td><span class="type-badge buy">▲ 매수</span></td>
+  <td><span class="code">196170</span></td>
+  <td>알테오젠</td>
+  <td class="num">3</td>
+  <td class="num">₩365,500</td>
+  <td class="num"><strong>₩1,096,500</strong></td>
+  <td class="num">₩164</td>
+  <td class="reason-cell">룰 5 트리거 (일중 -2.01% 하락 + 미보유). KOSDAQ 성장 버킷 첫 분할 진입 (목표 5% 중 25%). 단일 종목 노출 리스크 의식해 작게.</td>
+</tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+<script>
+function filt(btn, type) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.trade-row').forEach(r => {
+    r.style.display = (type === 'all' || r.dataset.type === type) ? '' : 'none';
+  });
+}
+</script>
+</body>
+</html>
