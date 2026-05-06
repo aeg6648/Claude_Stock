@@ -17,6 +17,7 @@
       "exchange": "KRX",
       "bucket": "mega_semi",
       "target_weight_pct": 15,
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/000660.KS",
       "google_url": "https://www.google.com/finance/quote/000660:KRX",
       "hankyung_url": "https://markets.hankyung.com/stock/000660"
     },
@@ -26,6 +27,7 @@
       "exchange": "KRX",
       "bucket": "semi_supply",
       "target_weight_pct": 12,
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/042700.KS",
       "google_url": "https://www.google.com/finance/quote/042700:KRX",
       "hankyung_url": "https://markets.hankyung.com/stock/042700"
     },
@@ -35,6 +37,7 @@
       "exchange": "KRX",
       "bucket": "leverage_etf",
       "target_weight_pct": 10,
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/122630.KS",
       "google_url": "https://www.google.com/finance/quote/122630:KRX",
       "hankyung_url": "https://markets.hankyung.com/stock/122630"
     },
@@ -44,6 +47,7 @@
       "exchange": "KRX",
       "bucket": "leverage_etf",
       "target_weight_pct": 10,
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/233740.KS",
       "google_url": "https://www.google.com/finance/quote/233740:KRX",
       "hankyung_url": "https://markets.hankyung.com/stock/233740"
     },
@@ -53,6 +57,7 @@
       "exchange": "KOSDAQ",
       "bucket": "battery_growth",
       "target_weight_pct": 8,
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/247540.KQ",
       "google_url": "https://www.google.com/finance/quote/247540:KOSDAQ",
       "hankyung_url": "https://markets.hankyung.com/stock/247540"
     },
@@ -62,6 +67,7 @@
       "exchange": "KOSDAQ",
       "bucket": "bio_growth",
       "target_weight_pct": 12,
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/196170.KQ",
       "google_url": "https://www.google.com/finance/quote/196170:KOSDAQ",
       "hankyung_url": "https://markets.hankyung.com/stock/196170"
     },
@@ -71,6 +77,7 @@
       "exchange": "KOSDAQ",
       "bucket": "bio_growth",
       "target_weight_pct": 8,
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/028300.KQ",
       "google_url": "https://www.google.com/finance/quote/028300:KOSDAQ",
       "hankyung_url": "https://markets.hankyung.com/stock/028300"
     },
@@ -80,6 +87,7 @@
       "exchange": "KRX",
       "bucket": "tech_growth",
       "target_weight_pct": 5,
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/035720.KS",
       "google_url": "https://www.google.com/finance/quote/035720:KRX",
       "hankyung_url": "https://markets.hankyung.com/stock/035720"
     },
@@ -89,6 +97,7 @@
       "exchange": "KRX",
       "bucket": "tech_growth",
       "target_weight_pct": 5,
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/035420.KS",
       "google_url": "https://www.google.com/finance/quote/035420:KRX",
       "hankyung_url": "https://markets.hankyung.com/stock/035420"
     },
@@ -98,6 +107,7 @@
       "exchange": "KRX",
       "bucket": "legacy_to_exit",
       "target_weight_pct": 0,
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/229200.KS",
       "google_url": "https://www.google.com/finance/quote/229200:KRX",
       "hankyung_url": "https://markets.hankyung.com/stock/229200",
       "note": "공격형 전환 전 보유분. 다음 차수에서 매도 후 233740 레버리지로 전환."
@@ -107,8 +117,11 @@
     {
       "code": "069500",
       "name": "KODEX 200",
-      "role": "시장 벤치마크 (수익률 비교용)",
-      "note": "watchlist에 매매 대상 아님. mark-to-market만 추적"
+      "exchange": "KRX",
+      "role": "시장 벤치마크",
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/069500.KS",
+      "google_url": "https://www.google.com/finance/quote/069500:KRX",
+      "hankyung_url": "https://markets.hankyung.com/stock/069500"
     },
     {
       "code": "950160",
@@ -121,18 +134,19 @@
         "cost_basis_krw": 252121400,
         "as_of_initial_check": "2026-05-06"
       },
+      "yahoo_url": "https://query1.finance.yahoo.com/v8/finance/chart/950160.KQ",
       "google_url": "https://www.google.com/finance/quote/950160:KOSDAQ",
       "hankyung_url": "https://markets.hankyung.com/stock/950160"
     }
   ],
   "buckets": {
-    "mega_semi": {"target_pct": 30, "rationale": "AI 메모리 사이클 핵심 노출. 2종목 (삼성전자 + SK하이닉스)"},
-    "semi_supply": {"target_pct": 12, "rationale": "HBM 장비/공급망 모멘텀 (한미반도체)"},
-    "leverage_etf": {"target_pct": 20, "rationale": "KOSPI/KOSDAQ 2배 베타. 단기 모멘텀 증폭. ※ 횡보 시 decay 주의"},
-    "battery_growth": {"target_pct": 8, "rationale": "2차전지 사이클 베팅 (셀+양극재)"},
-    "bio_growth": {"target_pct": 20, "rationale": "고변동성 KOSDAQ 바이오 모멘텀 (알테오젠 + HLB)"},
+    "mega_semi": {"target_pct": 30, "rationale": "AI 메모리 사이클 핵심 노출"},
+    "semi_supply": {"target_pct": 12, "rationale": "HBM 장비/공급망 (한미반도체)"},
+    "leverage_etf": {"target_pct": 20, "rationale": "KOSPI/KOSDAQ 2배 베타. 횡보 시 decay 주의"},
+    "battery_growth": {"target_pct": 8, "rationale": "2차전지 사이클 베팅"},
+    "bio_growth": {"target_pct": 20, "rationale": "고변동성 KOSDAQ 바이오 모멘텀"},
     "tech_growth": {"target_pct": 10, "rationale": "AI 플랫폼 (카카오 + NAVER)"},
-    "cash": {"target_pct": 0, "rationale": "공격형 — 풀 익스포저, 현금 플로어 0%"}
+    "cash": {"target_pct": 0, "rationale": "공격형 — 풀 익스포저"}
   },
   "liquidity_filter_krw": 1000000000
 }
